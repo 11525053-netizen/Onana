@@ -1,3 +1,4 @@
+#This code requires the media and audio files in README.md
 import pygame
 import sys
 import math
