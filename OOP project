@@ -1,0 +1,129 @@
+"""
+DRINK MIXING & SERVING ROBOT SYSTEM - AUTO RUN VERSION
+"""
+
+import time
+import random
+from enum import Enum
+from queue import Queue
+from datetime import datetime
+
+# --- ENUMS & CLASSES ---
+
+class DrinkType(Enum):
+    WATER = "Water"
+    GREEN_TEA = "Green Tea"
+    COFFEE = "Coffee"
+    MILK_TEA = "Milk Tea"
+    JUICE = "Juice"
+
+class RobotStatus(Enum):
+    IDLE = "Idle"
+    MOVING = "Moving"
+    SERVING = "Serving"
+    RETURNING = "Returning to base"
+
+class StationStatus(Enum):
+    AVAILABLE = "Available"
+    BUSY = "Busy"
+    EMPTY = "Out of stock"
+
+class Position:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    
+    def distance_to(self, other):
+        # Manhattan distance calculation
+        return abs(self.x - other.x) + abs(self.y - other.y)
+    
+    def __str__(self):
+        return f"({self.x}, {self.y})"
+
+class DrinkRequest:
+    def __init__(self, request_id, drink_type, customer_name):
+        self.request_id = request_id
+        self.drink_type = drink_type
+        self.customer_name = customer_name
+        self.timestamp = datetime.now().strftime("%H:%M:%S")
+        self.fulfilled = False
+    
+    def __str__(self):
+        status = "Completed" if self.fulfilled else "Waiting"
+        return f"[#{self.request_id}] {self.customer_name} ordered {self.drink_type.value} - Status: {status}"
+
+class DrinkStation:
+    def __init__(self, station_id, drink_type, position, capacity=10):
+        self.station_id = station_id
+        self.drink_type = drink_type
+        self.position = position
+        self.capacity = capacity
+        self.current_stock = capacity
+        self.status = StationStatus.AVAILABLE
+
+    def dispense(self):
+        if self.current_stock > 0:
+            print(f"      Station [{self.drink_type.value}] is preparing the drink...")
+            time.sleep(0.5)
+            self.current_stock -= 1
+            return True
+        return False
+
+class Robot:
+    HOME = Position(0, 0)
+    
+    def __init__(self, robot_id, speed=2):
+        self.robot_id = robot_id
+        self.speed = speed
+        self.position = Position(0, 0)
+        self.status = RobotStatus.IDLE
+
+    def serve(self, request, station, customer_pos):
+        print(f"\n[Robot#{self.robot_id}] Processing order for {request.customer_name}...")
+        
+        # Simulate movement (quick simulation)
+        self.status = RobotStatus.MOVING
+        time.sleep(0.3)
+        
+        # Dispensing drink at the station
+        self.status = RobotStatus.SERVING
+        station.dispense()
+        time.sleep(0.3)
+        
+        # Delivering to customer
+        print(f"   >>> {request.drink_type.value} has been delivered!")
+        request.fulfilled = True
+        self.status = RobotStatus.IDLE
+
+# --- MAIN & AUTO SIMULATION ---
+
+def main():
+    print("=" * 60)
+    print("   STARTING TEXT LOG SIMULATION")
+    print("=" * 60)
+    
+    # Quick setup for testing
+    robot = Robot(1)
+    water_station = DrinkStation(1, DrinkType.WATER, Position(2,0))
+    req = DrinkRequest(101, DrinkType.WATER, "Alex")
+    
+    # Execute one serving cycle
+    robot.serve(req, water_station, Position(5,5))
+    
+    print("\n--- LOG FINISHED! SWITCHING TO GRAPHICAL SIMULATION... ---")
+    time.sleep(2)
+
+def run_simulation():
+    try:
+        # Attempt to run the external Pygame simulation file
+        from bartender_robot_simulation import main as simulation_main
+        simulation_main()
+    except Exception as e:
+        print("\n[ERROR] Could not launch graphical simulation!")
+        print(f"Reason: {e}")
+        print("-" * 30)
+        print("FIX: You need to open a new Terminal and type: pip install pygame")
+        print("-" * 30)
+
+if __name__ == "__main__":
+    main()
+    run_simulation()
