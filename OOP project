@@ -1,15 +1,8 @@
-#This code can be used in any computers as long as it has all the libraries.
-"""
-DRINK MIXING & SERVING ROBOT SYSTEM - AUTO RUN VERSION
-"""
-
 import time
 import random
 from enum import Enum
 from queue import Queue
 from datetime import datetime
-
-# --- ENUMS & CLASSES ---
 
 class DrinkType(Enum):
     WATER = "Water"
@@ -94,8 +87,6 @@ class Robot:
         print(f"   >>> {request.drink_type.value} has been delivered!")
         request.fulfilled = True
         self.status = RobotStatus.IDLE
-
-# --- MAIN & AUTO SIMULATION ---
 
 def main():
     print("=" * 60)
