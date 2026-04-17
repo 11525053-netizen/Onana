@@ -27,7 +27,6 @@ class Position:
         self.x, self.y = x, y
     
     def distance_to(self, other):
-        # Manhattan distance calculation
         return abs(self.x - other.x) + abs(self.y - other.y)
     
     def __str__(self):
@@ -73,17 +72,13 @@ class Robot:
 
     def serve(self, request, station, customer_pos):
         print(f"\n[Robot#{self.robot_id}] Processing order for {request.customer_name}...")
-        
-        # Simulate movement (quick simulation)
         self.status = RobotStatus.MOVING
         time.sleep(0.3)
         
-        # Dispensing drink at the station
         self.status = RobotStatus.SERVING
         station.dispense()
         time.sleep(0.3)
         
-        # Delivering to customer
         print(f"   >>> {request.drink_type.value} has been delivered!")
         request.fulfilled = True
         self.status = RobotStatus.IDLE
@@ -93,12 +88,10 @@ def main():
     print("   STARTING TEXT LOG SIMULATION")
     print("=" * 60)
     
-    # Quick setup for testing
     robot = Robot(1)
     water_station = DrinkStation(1, DrinkType.WATER, Position(2,0))
     req = DrinkRequest(101, DrinkType.WATER, "Alex")
     
-    # Execute one serving cycle
     robot.serve(req, water_station, Position(5,5))
     
     print("\n--- LOG FINISHED! SWITCHING TO GRAPHICAL SIMULATION... ---")
@@ -106,7 +99,6 @@ def main():
 
 def run_simulation():
     try:
-        # Attempt to run the external Pygame simulation file
         from bartender_robot_simulation import main as simulation_main
         simulation_main()
     except Exception as e:
